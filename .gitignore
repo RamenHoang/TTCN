@@ -104,7 +104,7 @@ dist
 .tern-port
 
 # env configure
-./sh/env.sh
+sh/env.sh
 
 # package
 package-lock.json
