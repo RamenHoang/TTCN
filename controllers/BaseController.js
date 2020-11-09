@@ -71,6 +71,10 @@ class BaseController {
 			).then(
 				savedResource => savedResource,
 			);
+
+
+
+			
 		} catch (err) {
 			return Promise.reject(err);
 		}
