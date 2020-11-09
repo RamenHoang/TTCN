@@ -15,9 +15,6 @@ module.exports = {
 		host: process.env.DB_HOST || '127.0.0.1',
 		dialect: 'mysql'
 	},
-	winiston: {
-		logpath: '/iLrnLogs/logs/',
-	},
 	auth: {
 		jwt_secret: process.env.JWT_SECRET || 'ddb479c5-481a-4d99-98d0-0d357721dd5e',
 		jwt_expiresin: process.env.JWT_EXPIRES_IN || '1d',
