@@ -18,6 +18,10 @@ class BaseController {
 	* @return an err if an error occur
 	*/
 	static async getById(req, modelName) {
+		// req:
+		// - body
+		// - params
+		// - query
 		const reqParam = req.params.id;
 		let result;
 		try {

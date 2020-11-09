@@ -56,19 +56,16 @@ router.get('/:id', UsersController.getUserById);
  *     produces:
  *       - application/json
  *     parameters:
- *      - name: userId
+ *      - name: id
  *        description: numeric id of the user to get
  *        in: path
  *        required: true
- *        type: integer
- *        minimum: 1
+ *        type: string
  *     responses:
  *       200:
  *         description: delete user with id
- *         schema:
- *           $ref: '#/definitions/users'
  */
-router.delete('/:id([0-9])', UsersController.deleteById);
+router.delete('/:id', auth.isAuthunticated, UsersController.deleteById);
 
 /**
  * @swagger
@@ -88,5 +85,7 @@ router.delete('/:id([0-9])', UsersController.deleteById);
  */
 router.get('/profile', auth.isAuthunticated, UsersController.getProfile);
 
+
+router.post('/add', auth.isAuthunticated, UsersController.addUser);
 
 module.exports = router;
