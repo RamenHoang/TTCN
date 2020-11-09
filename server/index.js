@@ -20,18 +20,18 @@ app.set('db', dbContext);
 
 // Mount middleware
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({
-    origin: '*',
-    optionsSuccessStatus: 200
+  origin: '*',
+  optionsSuccessStatus: 200
 }));
 
 app.use('/api/docs', swagger.router);
 app.use(mainRouter);
 
 process.on('SIGINT', () => {
-    logger.log('stopping server', 'info');
-    process.exit();
+  logger.log('stopping server', 'info');
+  process.exit();
 })
 
 module.exports = app;

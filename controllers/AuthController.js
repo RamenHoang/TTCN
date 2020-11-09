@@ -75,19 +75,19 @@ class AuthController extends BaseController {
 	static async signUp(req, res) {
 		try {
 			const schema = Joi.object({
-				Username: Joi.string().regex(/^[a-zA-Z0-9_]{6,100}$/).required(),
-				// 7 to 15 characters which contain at least one numeric digit and a special character
-				Password: Joi.string().regex(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{7,100}$/).required(),
 				HoTen: Joi.string().required(),
-				NgheNghiep: Joi.string().required()
+				GioiTinh: Joi.number().integer(),
+				NgaySinh: Joi.date(),
+				QueQuan: Joi.string(),
+				NgheNghiep: Joi.string().required(),
+				Email: Joi.string().email(),
+				SoDienThoai: Joi.string().regex(/0[0-9]{9}/),
+				NoiLamViec: Joi.string(),
+				Username: Joi.string().regex(/^[a-zA-Z0-9_]{6,100}$/).required(),
+				Password: Joi.string().regex(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{7,100}$/).required()
 			});
 
-			const { error } = schema.validate({
-				Username: req.body.Username,
-				Password: req.body.Password,
-				HoTen: req.body.HoTen,
-				NgheNghiep: req.body.NgheNghiep
-			});
+			const { error } = schema.validate(req.body);
 
 			// Validate data from body
 			requestHandler.validateJoi(error, 400, 'bad Request', error ? error.details[0].message : '');
@@ -109,7 +109,7 @@ class AuthController extends BaseController {
 			const hashedPass = bcrypt.hashSync(req.body.Password, config.auth.saltRounds);
 			req.body.Password = hashedPass;
 			// Create MaUser
-			req.body.MaUser = `user_${stringUtil.generateString()}`;
+			req.body.Id = `user_${stringUtil.generateString()}`;
 
 			const createdUser = await super.create(req, 'TaUser');
 			if (!(_.isNull(createdUser))) {

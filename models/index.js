@@ -1,5 +1,4 @@
 const Sequelize = require('sequelize');
-
 // Import models here
 const TaUser = require('./TaUser');
 const TaBaiThi = require('./TaBaiThi');

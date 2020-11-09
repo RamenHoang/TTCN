@@ -108,3 +108,6 @@ sh/env.sh
 
 # package
 package-lock.json
+
+#vscode
+.vscode

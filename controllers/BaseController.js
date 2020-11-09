@@ -4,12 +4,10 @@ const Logger = require('../utils/logger');
 
 const logger = new Logger();
 const errHandler = new RequestHandler(logger);
-class BaseController {
-	constructor(options) {
-		this.limit = 10;
-		this.options = options;
-	}
 
+const limit = 10;
+
+class BaseController {
 	/**
 	* Get an element by it's id .
 	*
@@ -22,10 +20,9 @@ class BaseController {
 		// - body
 		// - params
 		// - query
-		const reqParam = req.params.id;
 		let result;
 		try {
-			result = await req.app.get('db')[modelName].findByPk(reqParam).then(
+			result = await req.app.get('db')[modelName].findByPk(req.params.Id).then(
 				errHandler.throwIf(r => !r, 404, 'not found', 'Resource not found'),
 				errHandler.throwError(500, 'sequelize error ,some thing wrong with either the data base connection or schema'),
 			);
@@ -50,7 +47,7 @@ class BaseController {
 		try {
 			result = await req.app.get('db')[modelName].destroy({
 				where: {
-					MaUser: req.params.id,
+					Id: req.params.Id,
 				},
 			}).then(
 				errHandler.throwIf(r => r < 1, 404, 'not found', 'No record matches the Id provided'),
@@ -68,13 +65,7 @@ class BaseController {
 			result = await req.app.get('db')[modelName].build(req.body).save().then(
 				errHandler.throwIf(r => !r, 500, 'Internal server error', 'something went wrong couldnt save data'),
 				errHandler.throwError(500, 'sequelize error'),
-			).then(
-				savedResource => savedResource,
 			);
-
-
-
-			
 		} catch (err) {
 			return Promise.reject(err);
 		}
@@ -83,7 +74,6 @@ class BaseController {
 
 
 	static async updateById(req, modelName, data) {
-		const recordID = req.params.id;
 		let result;
 
 		try {
@@ -92,14 +82,12 @@ class BaseController {
 					data,
 					{
 						where: {
-							id: recordID,
+							Id: req.params.Id || req.decoded.Id,
 						},
 					}
 				).then(
 					errHandler.throwIf(r => !r, 500, 'Internal server error', 'something went wrong couldnt update data'),
 					errHandler.throwError(500, 'sequelize error')
-				).then(
-					updatedRecored => updatedRecored
 				);
 		} catch (err) {
 			return Promise.reject(err);
@@ -121,8 +109,6 @@ class BaseController {
 					errHandler.throwIf(r => !r, 500, 'Internal server error', 'something went wrong couldnt update data'),
 					errHandler.throwError(500, 'sequelize error'),
 
-				).then(
-					updatedRecored => updatedRecored
 				);
 		} catch (err) {
 			return Promise.reject(err);
@@ -131,24 +117,21 @@ class BaseController {
 	}
 
 	static async getList(req, modelName, options) {
-		const page = req.query.page;
-
 		let results;
 		try {
 			if (_.isUndefined(options)) {
 				options = {};
 			}
-
-			if (parseInt(page, 10)) {
-				if (page === 0) {
-					options = _.extend({}, options, {});
+			if (req.query.page = parseInt(req.query.page, 10)) {
+				if (req.query.page === 0) {
+					options = {}
 				} else {
 					options = _.extend(
 						{},
 						options,
 						{
-							offset: this.limit * (page - 1),
-							limit: this.limit,
+							offset: limit * (req.query.page - 1),
+							limit: limit,
 						}
 					);
 				}
@@ -161,7 +144,7 @@ class BaseController {
 				.then(
 					errHandler.throwIf(r => !r, 500, 'Internal server error', 'something went wrong while fetching data'),
 					errHandler.throwError(500, 'sequelize error'),
-				).then(result => result);
+				);
 		} catch (err) {
 			return Promise.reject(err);
 		}

@@ -45,7 +45,7 @@ const options = {
 		},
 		tags: [
 			{
-				name: 'users',
+				name: 'Users',
 				description: 'Users API',
 			},
 			{
@@ -62,6 +62,7 @@ const options = {
 				description: 'JWT authorization of an API',
 				name: 'Authorization',
 				in: 'header',
+				scheme: 'Bearer'
 			},
 		},
 	},

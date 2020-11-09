@@ -68,7 +68,7 @@ const auth = require('../../utils/auth');
   *         properties:
   *           Username:
   *             type: string
-  *             description: an Username between 6 to 100 characters which contain at least one numeric digit
+  *             description: an Username between 6 to 100 characters
   *           Password:
   *             type: string
   *             description: a password between 7 to 100 characters which contain at least one numeric digit and a special character
@@ -77,7 +77,7 @@ const auth = require('../../utils/auth');
   *           NgheNghiep:
   *             type: string
   *           GioiTinh:
-  *             type: boolean
+  *             type: integer
   *           QueQuan:
   *             type: string
   *           Email:
