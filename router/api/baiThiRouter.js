@@ -83,4 +83,52 @@ const BaiThiController = require('../../controllers/BaiThiController');
 
 router.post('/add', auth.isAuthunticated, BaiThiController.addBaiThi);
 
+/**
+  * @swagger
+  * /baithi/mod/{MaBaiThi}:
+  *   put:
+  *     tags: 
+  *       - BaiThi
+  *     description: add new BaiThi
+  *     security: 
+  *       - Bearer: []
+  *     produces:
+  *       - application/json
+  *     parameters:
+  *       - name: MaBaiThi
+  *         in: path
+  *         required: true
+  *         type: string
+  *       - name: body
+  *         in: body
+  *         description: data of BaiThi
+  *         required: true
+  *         schema:
+  *           type: object
+  *           properties:
+  *             TenBaiThi:
+  *               type: string
+  *             CheDo:
+  *               type: integer
+  *             BaiThiYeuThich:
+  *               type: integer
+  *             ChuDe:
+  *               type: string
+  *             ThoiGianBatDau:
+  *               type: date
+  *             ThoiGianThi:
+  *               type: integer
+  *               description: unit minutes
+  *             AnhBia:
+  *               type: string
+  *               description: path to AnhBia
+  *             MatKhauBaiThi:
+  *               type: string
+  *     responses:
+  *       200:
+  *         description: BaiThi is modified successfully
+  */ 
+
+ router.put('/mod/:Id(baithi_[a-zA-Z0-9]{10})', auth.isAuthunticated, BaiThiController.modBaiThi);
+
 module.exports = router;

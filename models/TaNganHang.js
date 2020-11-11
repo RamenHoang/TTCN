@@ -2,13 +2,13 @@ module.exports = (sequelize, Sequelize) => {
   const TaNganHang = sequelize.define('TA_NGANHANG', {
     Id: {
       type: Sequelize.STRING(50),
-      field: 'MaNganHangCauHoi',
+      field: 'MaNganHang',
       primaryKey: true,
       allowNull: false
     },
-    TenNganHangCauHoi: {
+    TenNganHang: {
       type: Sequelize.STRING(100),
-      field: 'TenNganHangCauHoi',
+      field: 'TenNganHang',
       allowNull: false
     },
     LinhVuc: {

@@ -72,21 +72,21 @@ const options = {
 const swaggerSpec = swaggerJSDoc(options);
 // require('swagger-model-validator')(swaggerSpec);
 
-router.get('/json', (req, res) => {
-	res.setHeader('Content-Type', 'application/json');
-	res.send(swaggerSpec);
-});
+// router.get('/json', (req, res) => {
+// 	res.setHeader('Content-Type', 'application/json');
+// 	res.send(swaggerSpec);
+// });
 
 router.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-function validateModel(name, model) {
-	const responseValidation = swaggerSpec.validateModel(name, model, false, true);
-	if (!responseValidation.valid) {
-		throw new Error('Model doesn\'t match Swagger contract');
-	}
-}
+// function validateModel(name, model) {
+// 	const responseValidation = swaggerSpec.validateModel(name, model, false, true);
+// 	if (!responseValidation.valid) {
+// 		throw new Error('Model doesn\'t match Swagger contract');
+// 	}
+// }
 
 module.exports = {
 	router,
-	validateModel,
+	// validateModel,
 };

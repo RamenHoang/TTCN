@@ -1,18 +1,18 @@
 const Joi = require('joi');
-const jwt = require('jsonwebtoken');
-const _ = require('lodash');
-const bcrypt = require('bcrypt');
+const { decode } = require('jsonwebtoken');
+const { omit } = require('lodash');
+const { hashSync } = require('bcrypt');
 const BaseController = require('./BaseController');
 const RequestHandler = require('../utils/RequestHandler');
 const Logger = require('../utils/logger');
 const auth = require('../utils/auth');
 const config = require('../config/appconfig');
 const { Op } = require('sequelize');
+const { BadRequest, Created } = require('../utils/httpResponse');
 
 const stringUtil = require('../utils/stringUtil');
 
-const logger = new Logger();
-const requestHandler = new RequestHandler(logger);
+const requestHandler = new RequestHandler(new Logger());
 
 class UsersController extends BaseController {
   static async getUserById(req, res) {
@@ -21,10 +21,10 @@ class UsersController extends BaseController {
         Id: Joi.string().regex(/user_[a-zA-Z0-9]{10}/),
       });
       const { error } = schema.validate({ Id: req.params.Id });
-      requestHandler.validateJoi(error, 400, 'bad Request', 'invalid User Id');
+      requestHandler.validateJoi(error, BadRequest.status, BadRequest.error, 'invalid User Id');
 
       const result = await super.getById(req, 'TaUser');
-      return requestHandler.sendSuccess(res, 'User Data Extracted')(_.omit(result.dataValues, ['Password']));
+      return requestHandler.sendSuccess(res, 'User Data Extracted')(omit(result.dataValues, ['Password']));
     } catch (error) {
       return requestHandler.sendError(req, res, error);
     }
@@ -33,7 +33,7 @@ class UsersController extends BaseController {
   static async deleteById(req, res) {
     try {
       const result = await super.deleteById(req, 'TaUser');
-      return requestHandler.sendSuccess(res, 'User Deleted Successfully')({ result });
+      return requestHandler.sendSuccess(res, 'User Deleted Successfully')(result);
     } catch (err) {
       return requestHandler.sendError(req, res, err);
     }
@@ -42,12 +42,12 @@ class UsersController extends BaseController {
   static async getProfile(req, res) {
     try {
       const tokenFromHeader = auth.getJwtToken(req);
-      const user = jwt.decode(tokenFromHeader);
+      const user = decode(tokenFromHeader);
       const options = {
         where: { Id: user.Id },
       };
       const userProfile = await super.getByCustomOptions(req, 'TaUser', options);
-      return requestHandler.sendSuccess(res, 'User Profile fetched Successfully')(_.omit(userProfile.dataValues, ['Password']));
+      return requestHandler.sendSuccess(res, 'User Profile fetched Successfully')(omit(userProfile.dataValues, ['Password']));
     } catch (err) {
       return requestHandler.sendError(req, res, err);
     }
@@ -69,21 +69,17 @@ class UsersController extends BaseController {
       });
 
       const { error } = schema.validate(req.body);
-      requestHandler.validateJoi(error, 400, 'bad Request', 'invalid User data');
+      requestHandler.validateJoi(error, BadRequest.status, BadRequest.error, 'invalid User data');
 
       // Hash password
-      const hashedPass = bcrypt.hashSync(req.body.Password, config.auth.saltRounds);
+      const hashedPass = hashSync(req.body.Password, config.auth.saltRounds);
       req.body.Password = hashedPass;
       // Create MaUser
       req.body.Id = `user_${stringUtil.generateString()}`;
 
       const userAdded = await super.create(req, 'TaUser');
 
-      if (!userAdded) {
-        requestHandler.throwError(400, 'bad Request', 'invalid User data');
-      }
-
-      requestHandler.sendSuccess(res, 'Create new user success', 201)(userAdded.dataValues);
+      requestHandler.sendSuccess(res, 'Create new user success', Created.status)(userAdded.dataValues);
     } catch (error) {
       requestHandler.sendError(req, res, error);
     }
@@ -105,15 +101,11 @@ class UsersController extends BaseController {
       });
 
       const { error } = schema.validate(req.body);
-      requestHandler.validateJoi(error, 400, 'bad Request', 'invalid User data');
+      requestHandler.validateJoi(error, BadRequest.status, BadRequest.error, 'invalid User data');
 
-      const userAdded = await super.updateById(req, 'TaUser', req.body);
+      const result = await super.updateById(req, 'TaUser', req.body);
 
-      if (!userAdded) {
-        requestHandler.throwError(400, 'bad Request', 'invalid User data');
-      }
-
-      requestHandler.sendSuccess(res, 'Create new user success', 201)(userAdded.dataValues);
+      requestHandler.sendSuccess(res, 'User data is modified successfully')(result);
     } catch (error) {
       requestHandler.sendError(req, res, error);
     }
@@ -123,10 +115,10 @@ class UsersController extends BaseController {
     try {
       const schema = Joi.object({ page: Joi.number().integer().min(1).required() });
       const { error } = schema.validate({ page: req.query.page });
-      requestHandler.validateJoi(error, 400, 'bad Request', 'invalid query \'page\'');
+      requestHandler.validateJoi(error, BadRequest.status, BadRequest.error, 'invalid query \'page\'');
 
       const token = auth.getJwtToken(req);
-      const user = jwt.decode(token);
+      const user = decode(token);
 
       const options = {
         where: {
@@ -136,11 +128,7 @@ class UsersController extends BaseController {
         },
         attributes: ['HoTen', 'GioiTinh', 'NgaySinh', 'Id', 'Email', 'SoDienThoai', 'QueQuan', 'NoiLamViec', 'Username', 'SoNgayHoatDong', 'TrangThai']
       }
-      const users = await super.getList(req, 'TaUser', options)
-        .then(
-          requestHandler.throwIf(r => r === null || r === undefined || r.length === 0, 404, 'Not found', 'no content is matched'),
-          requestHandler.throwError(500, 'bad Request', 'some thing is wrong in server')
-        );
+      const users = await super.getList(req, 'TaUser', options);
 
       requestHandler.sendSuccess(res, 'list User: OK')(users);
     } catch (error) {
@@ -164,15 +152,11 @@ class UsersController extends BaseController {
       });
 
       const { error } = schema.validate(req.body);
-      requestHandler.validateJoi(error, 400, 'bad Request', 'invalid User data');
+      requestHandler.validateJoi(error, BadRequest.status, BadRequest.error, 'invalid User data');
 
-      const userAdded = await super.updateById(req, 'TaUser', req.body);
+      const result = await super.updateById(req, 'TaUser', req.body);
 
-      if (!userAdded) {
-        requestHandler.throwError(400, 'bad Request', 'invalid User data');
-      }
-
-      requestHandler.sendSuccess(res, 'Your profile is updated', 200)(userAdded.dataValues);
+      requestHandler.sendSuccess(res, 'Your profile is updated')(result);
     } catch (error) {
       requestHandler.sendError(req, res, error);
     }

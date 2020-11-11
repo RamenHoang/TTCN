@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
-const _ = require('lodash');
-const jwt = require('jsonwebtoken');
+const { omit } = require('lodash');
+const { decode, sign } = require('jsonwebtoken');
 const RequestHandler = require('../utils/RequestHandler');
 const Logger = require('../utils/logger');
 const BaseController = require('../controllers/BaseController');
@@ -9,14 +9,13 @@ const config = require('../config/appconfig');
 const auth = require('../utils/auth');
 const Joi = require('joi');
 
-const logger = new Logger();
-const requestHandler = new RequestHandler(logger);
+const requestHandler = new RequestHandler(new Logger());
 const tokenList = {};
 
 class AuthController extends BaseController {
 	static async login(req, res) {
 		try {
-			
+
 			const schema = Joi.object({
 				Username: Joi.string().regex(/^[a-zA-Z0-9_]{6,100}$/).required(),
 				// 7 to 15 characters which contain at least one numeric digit and a special character
@@ -44,8 +43,8 @@ class AuthController extends BaseController {
 					requestHandler.throwError(500, 'bcrypt error'),
 				);
 
-			const payload = _.omit(user.dataValues, ['Password', 'HoTen', 'GioiTinh', 'NgaySinh', 'QueQuan', 'SoNgayHoatDong', 'TrangThai', 'Email', 'SoDienThoai', 'NoiLamViec']);
-			const token = jwt.sign(
+			const payload = omit(user.dataValues, ['Password', 'HoTen', 'GioiTinh', 'NgaySinh', 'QueQuan', 'SoNgayHoatDong', 'TrangThai', 'Email', 'SoDienThoai', 'NoiLamViec']);
+			const token = sign(
 				payload,
 				config.auth.jwt_secret,
 				{
@@ -53,7 +52,7 @@ class AuthController extends BaseController {
 					algorithm: 'HS512'
 				}
 			);
-			const refreshToken = jwt.sign(
+			const refreshToken = sign(
 				payload,
 				config.auth.refresh_token_secret,
 				{
@@ -98,25 +97,17 @@ class AuthController extends BaseController {
 					Username: req.body.Username
 				}
 			};
-			const user = await super.getByCustomOptions(req, 'TaUser', options);
+			await super.getByCustomOptions(req, 'TaUser', options);
 
-			if (user) {
-				// Yes
-				requestHandler.throwError(400, 'bad request', 'invalid account, username has already existed')();
-			}
-			// No
 			// Hash password
-			const hashedPass = bcrypt.hashSync(req.body.Password, config.auth.saltRounds);
+			const hashedPass = hashSync(req.body.Password, config.auth.saltRounds);
 			req.body.Password = hashedPass;
 			// Create MaUser
 			req.body.Id = `user_${stringUtil.generateString()}`;
 
 			const createdUser = await super.create(req, 'TaUser');
-			if (!(_.isNull(createdUser))) {
-				requestHandler.sendSuccess(res, 'Account is created successfully', 201)(createdUser.dataValues);
-			} else {
-				requestHandler.throwError(422, 'Unprocessable Entity', 'unable to process the contained instructions')();
-			}
+
+			requestHandler.sendSuccess(res, 'Account is created successfully', 201)(createdUser.dataValues);
 		} catch (err) {
 			requestHandler.sendError(req, res, err);
 		}
@@ -124,7 +115,7 @@ class AuthController extends BaseController {
 
 	static async refreshToken(req, res) {
 		try {
-			if (_.isNull(req.body) || _.isUndefined(req.body)) {
+			if (req.body === undefined || req.body === null) {
 				requestHandler.throwError(400, 'bad request', 'please provide the refresh token in request body')();
 			}
 			const schema = Joi.object({
@@ -133,13 +124,11 @@ class AuthController extends BaseController {
 			const { error } = schema.validate({ refreshToken: req.body.refreshToken });
 			requestHandler.validateJoi(error, 400, 'bad Request', error ? error.details[0].message : '');
 			const tokenFromHeader = auth.getJwtToken(req);
-			const user = jwt.decode(tokenFromHeader);
+			const user = decode(tokenFromHeader);
 
 			if ((req.body.refreshToken) && (req.body.refreshToken in tokenList)) {
-				const token = jwt.sign({ user }, config.auth.jwt_secret, { expiresIn: config.auth.jwt_expiresin, algorithm: 'HS512' });
-				const response = {
-					token,
-				};
+				const token = sign({ user }, config.auth.jwt_secret, { expiresIn: config.auth.jwt_expiresin, algorithm: 'HS512' });
+				const response = { token };
 				// update the token in the list
 				tokenList[req.body.refreshToken].token = token;
 				requestHandler.sendSuccess(res, 'a new token is issued ', 200)(response);
@@ -155,7 +144,7 @@ class AuthController extends BaseController {
 		try {
 			const tokenFromHeader = auth.getJwtToken(req);
 
-			for(rf of tokenList) {
+			for (rf of tokenList) {
 				if (tokenList[rf].token === tokenFromHeader) {
 					delete tokenList[rf];
 					return requestHandler.sendSuccess(res, 'User Logged Out Successfully')();

@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 class RequestHandler {
 	constructor(logger) {
 		this.logger = logger;
@@ -31,7 +29,7 @@ class RequestHandler {
 	sendSuccess(res, message, status) {
 		this.logger.log(`a request has been made and proccessed successfully at: ${new Date()}`, 'info');
 		return (data, globalData) => {
-			if (_.isUndefined(status)) {
+			if (status === undefined || status === null) {
 				status = 200;
 			}
 			res.status(status).json({

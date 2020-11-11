@@ -1,5 +1,4 @@
-const jwt = require('jsonwebtoken');
-const _ = require('lodash');
+const { verify } = require('jsonwebtoken');
 const config = require('../config/appconfig');
 const RequestHandler = require('../utils/RequestHandler');
 const Logger = require('../utils/logger');
@@ -12,13 +11,12 @@ function getTokenFromHeader(req) {
 		|| (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer')) {
 		return req.headers.authorization.split(' ')[1];
 	}
-
 	return null;
 }
 
 function verifyToken(req, res, next) {
 	try {
-		if (_.isUndefined(req.headers.authorization)) {
+		if (req.headers.authorization === undefined || req.headers.authorization === null) {
 			requestHandler.throwError(401, 'Unauthorized', 'Not Authorized to access this resource!')();
 		}
 		const Bearer = req.headers.authorization.split(' ')[0];
@@ -34,7 +32,7 @@ function verifyToken(req, res, next) {
 		}
 
 		// verifies secret and checks exp
-		jwt.verify(token, config.auth.jwt_secret, (err, decoded) => {
+		verify(token, config.auth.jwt_secret, (err, decoded) => {
 			if (err) {
 				requestHandler.throwError(401, 'Unauthorized', 'please provide a valid token ,your token might be expired')();
 			}

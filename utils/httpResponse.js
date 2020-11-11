@@ -1,4 +1,4 @@
-const { extend } = require('lodash').extend;
+const { extend } = require('lodash');
 
 module.exports = {
 	BadRequest: {
@@ -31,9 +31,21 @@ module.exports = {
 		status: 500,
 	},
 
-	Success: {
+	OK: {
 		error: '',
 		status: 200,
+	},
+
+	Created: {
+		status: 201
+	},
+
+	Accepted: {
+		status: 202
+	},
+
+	NoContent: {
+		status: 204
 	},
 
 	onlyAdmin: extend({}, this.Forbidden, {
@@ -55,7 +67,7 @@ module.exports = {
 	}),
 
 	missingAttr(attrs) {
-		return extend({}, this.BadRequest, {
+		return _extend({}, this.BadRequest, {
 			message: `Attribute(s) (${attrs.join(',')}) seem(s) to be missing`,
 		});
 	},
@@ -99,19 +111,19 @@ module.exports = {
 	},
 
 	addSuccess() {
-		return extend({}, this.Success, {
+		return extend({}, this.Created, {
 			message: 'Item added successfully',
 		});
 	},
 
 	deleteSuccess() {
-		return extend({}, this.Success, {
+		return extend({}, this.OK, {
 			message: 'Item deleted successfully',
 		});
 	},
 
 	updateSuccess() {
-		return extend({}, this.Success, {
+		return extend({}, this.OK, {
 			message: 'Item updated successfully',
 		});
 	},
