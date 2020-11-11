@@ -55,7 +55,7 @@ db.TaHsTraLoi.belongsTo(db.TaUser, {
 	foreignKey: 'MaUserThi'
 });
 // BaiThi - HsTraLoi
-db.TaBaiThi.hasMany(db.TaPhongThi, {
+db.TaBaiThi.hasMany(db.TaHsTraLoi, {
 	foreignKey: 'MaBaiThi',
 	as: 'HsTraLoi'
 });

@@ -35,7 +35,7 @@ module.exports = (sequelize, Sequelize) => {
       field: 'ThoiGianBatDau'
     },
     ThoiGianThi: {
-      type: Sequelize.DATE,
+      type: Sequelize.INTEGER,
       field: 'ThoiGianThi'
     },
     AnhBia: {

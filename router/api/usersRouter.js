@@ -89,7 +89,7 @@ router.get('/:Id(user_[a-zA-Z0-9]{10})', UsersController.getUserById);
  *       200:
  *         description: delete user with MaUser
  */
-router.delete('/:Id', auth.isAuthunticated, UsersController.deleteById);
+router.delete('/:Id(user_[a-zA-Z0-9]{10})', auth.isAuthunticated, UsersController.deleteById);
 
 /**
  * @swagger
