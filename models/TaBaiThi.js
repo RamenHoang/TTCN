@@ -22,9 +22,9 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.INTEGER,
       field: 'BaiThiYeuThich'
     },
-    MaUser: {
+    MaUserTao: {
       type: Sequelize.STRING(50),
-      field: 'MaUser'
+      field: 'MaUserTao'
     },
     ChuDe: {
       type: Sequelize.STRING(50),
