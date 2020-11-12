@@ -54,14 +54,6 @@ db.TaUser.hasMany(db.TaHsTraLoi, {
 db.TaHsTraLoi.belongsTo(db.TaUser, {
 	foreignKey: 'MaUserThi'
 });
-// BaiThi - HsTraLoi
-db.TaBaiThi.hasMany(db.TaHsTraLoi, {
-	foreignKey: 'MaBaiThi',
-	as: 'HsTraLoi'
-});
-db.TaHsTraLoi.belongsTo(db.TaBaiThi, {
-	foreignKey: 'MaBaiThi'
-});
 // BaiThi - GoiCauHoi
 db.TaBaiThi.hasMany(db.TaGoiCauHoi, {
 	foreignKey: 'MaBaiThi',
@@ -92,12 +84,19 @@ db.TaDapAn.belongsTo(db.TaCauHoi, {
 	foreignKey: 'MaCauHoi'
 });
 // GoiCauHoi - HsTraLoi
-db.TaGoiCauHoi.hasMany(db.TaHsTraLoi, {
-	foreignKey: 'MaCauHoi',
-	as: 'HsTraLoi'
-});
-db.TaHsTraLoi.belongsTo(db.TaGoiCauHoi, {
-	foreignKey: 'MaCauHoi'
-});
+// db.TaGoiCauHoi.hasMany(db.TaHsTraLoi, {
+// 	foreignKey: 'MaCauHoi',
+// 	as: 'HsTraLoi'
+// });
+// db.TaHsTraLoi.belongsTo(db.TaGoiCauHoi, {
+// 	foreignKey: 'MaCauHoi'
+// });
+// db.TaGoiCauHoi.hasMany(db.TaHsTraLoi, {
+// 	foreignKey: 'MaBaiThi',
+// 	as: 'HsTraLoi'
+// });
+// db.TaHsTraLoi.belongsTo(db.TaGoiCauHoi, {
+// 	foreignKey: 'MaBaiThi'
+// });
 
 module.exports = db;

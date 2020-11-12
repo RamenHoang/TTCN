@@ -1,5 +1,4 @@
 const Joi = require('joi');
-const { decode } = require('jsonwebtoken');
 const { omit } = require('lodash');
 const { hashSync } = require('bcrypt');
 const BaseController = require('./BaseController');
@@ -13,6 +12,7 @@ const { BadRequest, Created } = require('../utils/httpResponse');
 const stringUtil = require('../utils/stringUtil');
 
 const requestHandler = new RequestHandler(new Logger());
+const modelName = 'TaUser';
 
 class UsersController extends BaseController {
   static async getUserById(req, res) {
@@ -23,7 +23,7 @@ class UsersController extends BaseController {
       const { error } = schema.validate({ Id: req.params.Id });
       requestHandler.validateJoi(error, BadRequest.status, BadRequest.error, 'invalid User Id');
 
-      const result = await super.getById(req, 'TaUser');
+      const result = await super.getById(req, modelName);
       return requestHandler.sendSuccess(res, 'User Data Extracted')(omit(result.dataValues, ['Password']));
     } catch (error) {
       return requestHandler.sendError(req, res, error);
@@ -32,7 +32,7 @@ class UsersController extends BaseController {
 
   static async deleteById(req, res) {
     try {
-      const result = await super.deleteById(req, 'TaUser');
+      const result = await super.deleteById(req, modelName);
       return requestHandler.sendSuccess(res, 'User Deleted Successfully')(result);
     } catch (err) {
       return requestHandler.sendError(req, res, err);
@@ -41,12 +41,10 @@ class UsersController extends BaseController {
 
   static async getProfile(req, res) {
     try {
-      const tokenFromHeader = auth.getJwtToken(req);
-      const user = decode(tokenFromHeader);
       const options = {
-        where: { Id: user.Id },
+        where: { Id: req.decoded.Id },
       };
-      const userProfile = await super.getByCustomOptions(req, 'TaUser', options);
+      const userProfile = await super.getByCustomOptions(req, modelName, options);
       return requestHandler.sendSuccess(res, 'User Profile fetched Successfully')(omit(userProfile.dataValues, ['Password']));
     } catch (err) {
       return requestHandler.sendError(req, res, err);
@@ -77,7 +75,7 @@ class UsersController extends BaseController {
       // Create MaUser
       req.body.Id = `user_${stringUtil.generateString()}`;
 
-      const userAdded = await super.create(req, 'TaUser');
+      const userAdded = await super.create(req, modelName);
 
       requestHandler.sendSuccess(res, 'Create new user success', Created.status)(userAdded.dataValues);
     } catch (error) {
@@ -103,7 +101,7 @@ class UsersController extends BaseController {
       const { error } = schema.validate(req.body);
       requestHandler.validateJoi(error, BadRequest.status, BadRequest.error, 'invalid User data');
 
-      const result = await super.updateById(req, 'TaUser', req.body);
+      const result = await super.updateById(req, modelName, req.body);
 
       requestHandler.sendSuccess(res, 'User data is modified successfully')(result);
     } catch (error) {
@@ -117,18 +115,15 @@ class UsersController extends BaseController {
       const { error } = schema.validate({ page: req.query.page });
       requestHandler.validateJoi(error, BadRequest.status, BadRequest.error, 'invalid query \'page\'');
 
-      const token = auth.getJwtToken(req);
-      const user = decode(token);
-
       const options = {
         where: {
           Id: {
-            [Op.ne]: user.Id
+            [Op.ne]: req.decoded.Id
           }
         },
         attributes: ['HoTen', 'GioiTinh', 'NgaySinh', 'Id', 'Email', 'SoDienThoai', 'QueQuan', 'NoiLamViec', 'Username', 'SoNgayHoatDong', 'TrangThai']
       }
-      const users = await super.getList(req, 'TaUser', options);
+      const users = await super.getList(req, modelName, options);
 
       requestHandler.sendSuccess(res, 'list User: OK')(users);
     } catch (error) {
@@ -145,7 +140,7 @@ class UsersController extends BaseController {
         QueQuan: Joi.string(),
         NgheNghiep: Joi.string(),
         Email: Joi.string().email(),
-        SoDienThoai: Joi.string().regex(/0[0-9]{9}/),
+        SoDienThoai: Joi.string().regex(/(\+84|0[3|5|7|8|9])([0-9]{8})/),
         NoiLamViec: Joi.string(),
         Username: Joi.string().regex(/^[a-zA-Z0-9_]{6,100}$/),
         Password: Joi.string().regex(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{7,100}$/)
@@ -154,7 +149,7 @@ class UsersController extends BaseController {
       const { error } = schema.validate(req.body);
       requestHandler.validateJoi(error, BadRequest.status, BadRequest.error, 'invalid User data');
 
-      const result = await super.updateById(req, 'TaUser', req.body);
+      const result = await super.updateById(req, modelName, req.body);
 
       requestHandler.sendSuccess(res, 'Your profile is updated')(result);
     } catch (error) {

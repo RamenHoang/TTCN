@@ -58,6 +58,49 @@ class BaiThiController extends BaseController {
       requestHandler.sendError(req, res, error);
     }
   }
+
+  static async listBaiThi(req, res) {
+    try {
+      const schema = Joi.object({
+        page: Joi.number().integer().required(),
+        TenBaiThi: Joi.string(),
+        ChuDe: Joi.string()
+      });
+      const { error } = schema.validate(req.query);
+      requestHandler.validateJoi(error, BadRequest.status, BadRequest.error, 'page is invalid');
+
+      const options = {}
+      if (req.query.TenBaiThi) {
+        options.where = {
+          TenBaiThi: {
+            [Op.like]: `%${req.query.TenBaiThi}%`
+          }
+        }
+      }
+      if (req.query.ChuDe) {
+        if (options.where) {
+          options.where = {
+            ...options.where,
+            ChuDe: {
+              [Op.like]: `%${req.query.ChuDe}%`
+            }
+          }
+        } else {
+          options.where = {
+            ChuDe: {
+              [Op.like]: `%${req.query.ChuDe}%`
+            }
+          }
+        }
+      }
+
+      const list = await super.getList(req, 'TaBaiThi', options);
+
+      requestHandler.sendSuccess(res, 'List NganHang: OK')(list);
+    } catch (error) {
+      requestHandler.sendError(error, res, error);
+    }
+  }
 }
 
 module.exports = BaiThiController;
