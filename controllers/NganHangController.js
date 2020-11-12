@@ -4,6 +4,7 @@ const Logger = require('../utils/logger');
 const Joi = require('joi');
 const { BadRequest, Created } = require('../utils/httpResponse');
 const stringUtil = require('../utils/stringUtil');
+const { Op } = require('sequelize');
 
 const requestHandler = new RequestHandler(new Logger());
 
@@ -26,6 +27,49 @@ class NganHangController extends BaseController {
       requestHandler.sendSuccess(res, 'NganHang is created successfully', Created.status)(result);
     } catch (error) {
       requestHandler.sendError(req, res, error);
+    }
+  }
+
+  static async listNganHang(req, res) {
+    try {
+      const schema = Joi.object({
+        page: Joi.number().integer().required(),
+        TenNganHang: Joi.string(),
+        LinhVuc: Joi.string()
+      });
+      const { error } = schema.validate(req.query);
+      requestHandler.validateJoi(error, BadRequest.status, BadRequest.error, 'page is invalid');
+
+      const options = {}
+      if (req.query.TenNganHang) {
+        options.where = {
+          TenNganHang: {
+            [Op.like]: `%${req.query.TenNganHang}%`
+          }
+        }
+      }
+      if (req.query.LinhVuc) {
+        if (options.where) {
+          options.where = {
+            ...options.where,
+            LinhVuc: {
+              [Op.like]: `%${req.query.LinhVuc}%`
+            }
+          }
+        } else {
+          options.where = {
+            LinhVuc: {
+              [Op.like]: `%${req.query.LinhVuc}%`
+            }
+          }
+        }
+      }
+
+      const list = await super.getList(req, 'TaNganHang', options);
+
+      requestHandler.sendSuccess(res, 'List NganHang: OK')(list);
+    } catch (error) {
+      requestHandler.sendError(error, res, error);
     }
   }
 }

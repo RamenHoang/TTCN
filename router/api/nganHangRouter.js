@@ -60,4 +60,33 @@ const NganHangController = require('../../controllers/NganHangController');
 
 router.post('/add', auth.isAuthunticated, NganHangController.addNganHang);
 
+/**
+ * @swagger
+ * /nganhang/list:
+ *  get:
+ *    tags: 
+ *      - NganHang
+ *    description: NganHang APIs
+ *    security: 
+ *      - Bearer: []
+ *    produces:
+ *      - application/json
+ *    parameters:
+ *      - name: page
+ *        in: query
+ *        required: true
+ *        type: integer
+ *      - name: TenNganHang
+ *        in: query
+ *        type: string
+ *      - name: LinhVuc
+ *        in: query
+ *        type: string
+ *    responses:
+ *      200: 
+ *        description: List NganHang OK
+ */
+
+router.get('/list', auth.isAuthunticated, NganHangController.listNganHang);
+
 module.exports = router;

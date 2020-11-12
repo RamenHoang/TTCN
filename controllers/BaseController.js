@@ -102,16 +102,15 @@ class BaseController {
 		let result;
 
 		try {
-			result = await req.app.get('db')[modelName]
-				.update(
-					data,
-					{
-						where: options,
-					}
-				).then(
-					errHandler.throwIf(r => !r, Forbidden.status, Forbidden.error, 'Data may be not valid'),
-					errHandler.throwError(InternalServerError.status, 'sequelize error')
-				);
+			result = await req.app.get('db')[modelName].update(
+				data,
+				{
+					where: options,
+				}
+			).then(
+				errHandler.throwIf(r => !r, Forbidden.status, Forbidden.error, 'Data may be not valid'),
+				errHandler.throwError(InternalServerError.status, 'sequelize error')
+			);
 		} catch (err) {
 			return Promise.reject(err);
 		}
