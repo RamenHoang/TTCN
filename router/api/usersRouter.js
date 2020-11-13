@@ -67,7 +67,7 @@ const auth = require('../../utils/auth');
  *       200:
  *         description: a single user object
  */
-router.get('/:Id(user_[a-zA-Z0-9]{10})', UsersController.getUserById);
+router.get('/:Id(user_[a-zA-Z0-9]{10})', auth.isAuthunticated, UsersController.getUserById);
 
 /**
  * @swagger

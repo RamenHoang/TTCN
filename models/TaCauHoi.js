@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-  const TaCauHoi = sequelize.define('TA_CAUHOI', {
+  const TaCauHoi = sequelize.define('ta_cauhoi', {
     Id: {
       type: Sequelize.STRING(50),
       field: 'MaCauHoi',
@@ -24,7 +24,7 @@ module.exports = (sequelize, Sequelize) => {
     timestamps: false,
     paranoid: true,
     freezeTableName: true,
-    tableName: 'TA_CAUHOI'
+    tableName: 'ta_cauhoi'
   });
 
   return TaCauHoi;
