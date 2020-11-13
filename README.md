@@ -31,5 +31,5 @@ npm install
 - Type `npm run dev` to run project in monitoring mode
 - Press `F5` to start Debbuging
 
-[Documentation](localhost:12345/api/docs)
-[Main](localhost:12345/api/v1) 
+#### Documentation: localhost:12345/api/docs
+#### Main: localhost:12345/api/v1 
