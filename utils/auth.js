@@ -56,7 +56,7 @@ function verifyToken(req, res, next) {
 					originalUrl[0] === 'hstraloi' ||
 					(
 						originalUrl[0] === 'users' &&
-						(originalUrl[1] === 'get' || originalUrl[1] === 'list' || originalUrl[1] === 'profile')
+						(originalUrl[1] === 'get' || originalUrl[1].indexOf('list') !== -1 || originalUrl[1] === 'profile')
 					)
 				) return passed();
 

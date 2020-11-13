@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-  const TaUser = sequelize.define('TA_USER', {
+  const TaUser = sequelize.define('ta_user', {
     Id: {
       type: Sequelize.STRING(50),
       primaryKey: true,
@@ -62,7 +62,7 @@ module.exports = (sequelize, Sequelize) => {
     timestamps: false,
     paranoid: true,
     freezeTableName: true,
-    tableName: 'TA_USER'
+    tableName: 'ta_user'
   }
   );
 
