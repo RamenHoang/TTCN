@@ -53,8 +53,8 @@ const options = {
 				description: 'Authentication apis',
 			}
 		],
-		schemes: ['http'],
-		host: `localhost:${config.app.port}`,
+		schemes: ['https'], // heroku
+		host: `ttcn-server.herokuapp.com`,
 		basePath: '/api/v1',
 		securityDefinitions: {
 			Bearer: {

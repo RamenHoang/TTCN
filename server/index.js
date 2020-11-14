@@ -27,7 +27,7 @@ app.use(cors({
 }));
 
 app.use('/api/docs', swagger.router);
-app.use(mainRouter);
+app.use('/', mainRouter);
 
 process.on('SIGINT', () => {
   logger.log('stopping server', 'info');
