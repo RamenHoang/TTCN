@@ -1,5 +1,7 @@
 const router = require('express').Router();
 
+router.use('/cauhoi', require('./cauhoiRouter'));
+
 router.use('/nganhang', require('./nganHangRouter'));
 
 router.use('/baithi', require('./baiThiRouter'));
