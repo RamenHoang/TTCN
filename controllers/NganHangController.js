@@ -69,7 +69,7 @@ class NganHangController extends BaseController {
 
       requestHandler.sendSuccess(res, 'List NganHang: OK')(list);
     } catch (error) {
-      requestHandler.sendError(error, res, error);
+      requestHandler.sendError(req, res, error);
     }
   }
 }

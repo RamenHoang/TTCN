@@ -65,7 +65,7 @@ class CauhoiController extends BaseController {
     
             requestHandler.sendSuccess(res, 'List Cauhoi: OK')(list);
         } catch (error) {
-            requestHandler.sendError(error, res, error);
+            requestHandler.sendError(req, res, error);
         }
     }
 }
