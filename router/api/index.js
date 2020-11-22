@@ -10,6 +10,8 @@ router.use('/baithi', require('./baiThiRouter'));
 
 router.use('/users', require('./usersRouter'));
 
+router.use('/hstraloi', require('./hsTraLoiRouter'));
+
 router.use('/', require('./authRouter'));
 
 module.exports = router;
