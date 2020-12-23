@@ -265,11 +265,16 @@ router.put('/mod/:Id(user_[a-zA-Z0-9]{10})', auth.isAuthunticated, UsersControll
  *    security:
  *      - Bearer: []
  *    parameters:
- *      - name: page
+ *      - name: offset
  *        in: query
  *        description: paginate
  *        required: true
- *        type: string
+ *        type: integer
+ *      - name: limit
+ *        in: query
+ *        description: paginate
+ *        required: true
+ *        type: integer
  *    responses:
  *      200:
  *        description: list User OK

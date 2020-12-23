@@ -7,6 +7,7 @@ const { OK, BadRequest } = require('../utils/httpResponse');
 
 const requestHandler = new RequestHandler(new Logger());
 
+const { maxLimit, minOffset } = require('../config/appconfig').paginate;
 class BaiThiController extends BaseController {
   static async addBaiThi(req, res) {
     try {
@@ -21,7 +22,7 @@ class BaiThiController extends BaseController {
         AnhBia: Joi.string().max(100),
         MatKhauBaiThi: Joi.string().max(20)
       });
-      
+
       const { error } = schema.validate(req.body);
       requestHandler.validateJoi(error, BadRequest.status, BadRequest.error, 'invalid BaiThi data');
 
@@ -62,7 +63,8 @@ class BaiThiController extends BaseController {
   static async listBaiThi(req, res) {
     try {
       const schema = Joi.object({
-        page: Joi.number().integer().required(),
+        offset: Joi.number().integer().min(minOffset).required(),
+        limit: Joi.number().integer().max(maxLimit).required(),
         TenBaiThi: Joi.string(),
         ChuDe: Joi.string()
       });

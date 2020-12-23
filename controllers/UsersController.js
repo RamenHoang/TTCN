@@ -14,6 +14,7 @@ const stringUtil = require('../utils/stringUtil');
 const requestHandler = new RequestHandler(new Logger());
 const modelName = 'TaUser';
 
+const { maxLimit, minOffset } = require('../config/appconfig').paginate;
 class UsersController extends BaseController {
   static async getUserById(req, res) {
     try {
@@ -110,10 +111,14 @@ class UsersController extends BaseController {
   }
 
   static async listUser(req, res) {
+    console.log(req.query);
     try {
-      const schema = Joi.object({ page: Joi.number().integer().min(1).required() });
-      const { error } = schema.validate({ page: req.query.page });
-      requestHandler.validateJoi(error, BadRequest.status, BadRequest.error, 'invalid query \'page\'');
+      const schema = Joi.object({
+        offset: Joi.number().integer().min(minOffset).required(),
+        limit: Joi.number().integer().max(maxLimit).required()
+      });
+      const { error } = schema.validate(req.query);
+      requestHandler.validateJoi(error, BadRequest.status, BadRequest.error, 'invalid query \'offset\' and \'limit\'');
 
       const options = {
         where: {

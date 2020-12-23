@@ -8,6 +8,7 @@ const { Op } = require('sequelize');
 
 const requestHandler = new RequestHandler(new Logger());
 
+const { maxLimit, minOffset } = require('../config/appconfig').paginate;
 class NganHangController extends BaseController {
   static async addNganHang(req, res) {
     try {
@@ -33,12 +34,13 @@ class NganHangController extends BaseController {
   static async listNganHang(req, res) {
     try {
       const schema = Joi.object({
-        page: Joi.number().integer().required(),
+        offset: Joi.number().integer().min(minOffset).required(),
+        limit: Joi.number().integer().max(maxLimit).required(),
         TenNganHang: Joi.string(),
         LinhVuc: Joi.string()
       });
       const { error } = schema.validate(req.query);
-      requestHandler.validateJoi(error, BadRequest.status, BadRequest.error, 'page is invalid');
+      requestHandler.validateJoi(error, BadRequest.status, BadRequest.error, 'offset and limit is invalid');
 
       const options = {}
       if (req.query.TenNganHang) {

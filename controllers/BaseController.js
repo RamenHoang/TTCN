@@ -6,8 +6,6 @@ const { NotFound, InternalServerError, Forbidden } = require('../utils/httpRespo
 const logger = new Logger();
 const errHandler = new RequestHandler(logger);
 
-const limit = 10;
-
 class BaseController {
 	/**
 	* Get an element by it's id .
@@ -123,16 +121,18 @@ class BaseController {
 			if (options === undefined || options === null) {
 				options = {};
 			}
-			if (req.query.page = parseInt(req.query.page, 10)) {
-				if (req.query.page === 0) {
+			if ((req.query.offset = parseInt(req.query.offset, 10)) 
+					&& 
+					(req.query.limit = parseInt(req.query.limit, 10))) {
+				if (req.query.offset === 0) {
 					options = {}
 				} else {
 					options = extend(
 						{},
 						options,
 						{
-							offset: limit * (req.query.page - 1),
-							limit: limit,
+							offset: req.query.offset,
+							limit: req.query.limit,
 						}
 					);
 				}
@@ -149,7 +149,10 @@ class BaseController {
 		} catch (err) {
 			return Promise.reject(err);
 		}
-		return results;
+		return {
+			results,
+			total: results.length
+		}	;
 	}
 }
 module.exports = BaseController;

@@ -105,7 +105,11 @@ router.post('/add', isAuthunticated, CauhoiController.addCauHoi);
  *    produces:
  *      - application/json
  *    parameters:
- *      - name: page
+ *      - name: offset
+ *        in: query
+ *        required: true
+ *        type: integer
+ *      - name: limit
  *        in: query
  *        required: true
  *        type: integer

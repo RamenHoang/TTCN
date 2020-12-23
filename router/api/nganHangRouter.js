@@ -72,7 +72,11 @@ router.post('/add', auth.isAuthunticated, NganHangController.addNganHang);
  *    produces:
  *      - application/json
  *    parameters:
- *      - name: page
+ *      - name: offset
+ *        in: query
+ *        required: true
+ *        type: integer
+ *      - name: limit
  *        in: query
  *        required: true
  *        type: integer

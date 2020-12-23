@@ -21,5 +21,9 @@ module.exports = {
 		saltRounds: process.env.SALT_ROUND || 10,
 		refresh_token_secret: process.env.REFRESH_TOKEN_SECRET || 'c54eff07-68ae-4c5c-9e8f-436ddc308296',
 		refresh_token_expiresin: process.env.REFRESH_TOKEN_EXPIRES_IN || '2d',
+	},
+	paginate: {
+		minOffset: 0,
+		maxLimit: 10
 	}
 };
