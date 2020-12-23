@@ -85,6 +85,30 @@ router.post('/add', auth.isAuthunticated, BaiThiController.addBaiThi);
 
 /**
   * @swagger
+  * /baithi/get/{MaBaiThi}:
+  *   get:
+  *     tags: 
+  *       - BaiThi
+  *     description: get BaiThi by MaBaiThi
+  *     security: 
+  *       - Bearer: []
+  *     produces:
+  *       - application/json
+  *     parameters:
+  *       - name: MaUser
+  *         description: numeric id of the user to get /baithi_[a-zA-Z0-9]{10}/
+  *         in: path
+  *         required: true
+  *         type: string
+  *     responses:
+  *       201:
+  *         description: Create new BaiThi successfully
+  */ 
+
+ router.get('/get/:MaBaiThi', auth.isAuthunticated, BaiThiController.addBaiThi);
+
+/**
+  * @swagger
   * /baithi/mod/{MaBaiThi}:
   *   put:
   *     tags: 
@@ -126,7 +150,7 @@ router.post('/add', auth.isAuthunticated, BaiThiController.addBaiThi);
   *               type: string
   *     responses:
   *       200:
-  *         description: BaiThi is modified successfully
+  *         description: list BaiThi OK
   */ 
 
  router.put('/mod/:Id(baithi_[a-zA-Z0-9]{10})', auth.isAuthunticated, BaiThiController.modBaiThi);
