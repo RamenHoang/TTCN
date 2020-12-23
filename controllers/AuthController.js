@@ -62,10 +62,14 @@ class AuthController extends BaseController {
 			const response = {
 				status: 'Logged in',
 				token,
-				refreshToken,
+				refreshToken
 			};
 			tokenList[refreshToken] = response;
-			requestHandler.sendSuccess(res, 'User logged in Successfully')({ token, refreshToken });
+			requestHandler.sendSuccess(res, 'User logged in Successfully')({ 
+				token, 
+				refreshToken, 
+				payload 
+			});
 		} catch (error) {
 			requestHandler.sendError(req, res, error);
 		}

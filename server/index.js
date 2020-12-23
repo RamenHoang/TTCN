@@ -1,4 +1,3 @@
-const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const config = require('../config/appconfig');
@@ -7,6 +6,7 @@ const swagger = require('../utils/swagger');
 const dbContext = require('../models/index');
 const mainRouter = require('../router/index');
 
+const express = require('express');
 // Init express app
 const app = express();
 

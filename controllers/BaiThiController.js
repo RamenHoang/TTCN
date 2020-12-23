@@ -21,7 +21,7 @@ class BaiThiController extends BaseController {
         AnhBia: Joi.string().max(100),
         MatKhauBaiThi: Joi.string().max(20)
       });
-
+      
       const { error } = schema.validate(req.body);
       requestHandler.validateJoi(error, BadRequest.status, BadRequest.error, 'invalid BaiThi data');
 
